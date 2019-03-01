@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" onLoad="OnLoad">
+  <ribbon>
+    <tabs>
+      <tab id="tabLegendary" tag="tabLegendary" getLabel="GetLabel_Callback" getVisible="GetVisible_Callback">
+        <group id='grpMain' label='Main' visible='true'>
+          <button id="btnCreateConReport"    tag="btnCreateConReport"    label="Consolidated Report"  size="large" onAction="DoAction" getImage="GetImage_Callback" />
+          <button id="btnPhoenixCheck" tag="btnPhoenixCheck" label="Check Phoenix File" size="large" onAction="DoAction" getImage="GetImage_Callback" />
+          <button id="btnGetPipedriveList" tag="btnGetPipedriveList" label="Pipedrive Filter" size="large" onAction="DoAction" getImage="GetImage_Callback" />
+          <!-- <comboBox id="cboTest" 
+                    tag="cboTest" 
+                    screentip="Pick an Item"
+                    onChange="cboOnChange_Callback" 
+                    sizeString="Pick an Item is Big" 
+                    getItemCount="GetItemCount_Callback"
+                    getItemLabel="GetItemLabel_Callback" /> -->
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>
