@@ -11,10 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegendaryApp", "LegendaryAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipedrive", "Pipedrive.net\Pipedrive.csproj", "{2962F2EE-94A3-43E1-B064-9C0FAC09212B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoho.Api", "Zoho.Api\Zoho.Api.csproj", "{04FBD287-9BFD-4441-A54D-B38296500154}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoho", "Zoho\Zoho.csproj", "{DDDCA124-AC7C-4618-B73D-EC4A474F55E3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,14 +33,6 @@ Global
 		{2962F2EE-94A3-43E1-B064-9C0FAC09212B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2962F2EE-94A3-43E1-B064-9C0FAC09212B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2962F2EE-94A3-43E1-B064-9C0FAC09212B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04FBD287-9BFD-4441-A54D-B38296500154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04FBD287-9BFD-4441-A54D-B38296500154}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04FBD287-9BFD-4441-A54D-B38296500154}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04FBD287-9BFD-4441-A54D-B38296500154}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDDCA124-AC7C-4618-B73D-EC4A474F55E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDDCA124-AC7C-4618-B73D-EC4A474F55E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDDCA124-AC7C-4618-B73D-EC4A474F55E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDDCA124-AC7C-4618-B73D-EC4A474F55E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
