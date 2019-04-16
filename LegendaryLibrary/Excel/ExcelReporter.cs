@@ -149,13 +149,14 @@ namespace LegendaryLibrary
             var excelApp = new Excel.Application();
             Excel.Workbook book = null;
             Excel.Worksheet sheet = null;
-            object[,] cellData = new object[5000, 104];
 
             try
             {
                 excelApp.Visible = true;
                 book = excelApp.Workbooks.Add();
                 sheet = ExcelHelper.GetWorksheet(book, "Sheet1", true);
+
+                object[,] cellData = new object[grid.Rows.Count+3, grid.ColumnCount+3];
 
                 int row = 1;
                 int col = 1;
@@ -177,7 +178,7 @@ namespace LegendaryLibrary
                         cellData[i, j] = grid[j, i].Value;
 
                 // Write the entire object array at once to the excel sheet...
-                sheet.Range("A3:CZ5003").Value2 = cellData;
+                sheet.Range($"A3:{GetColumnName(grid.Columns.Count+3)}{grid.Rows.Count+3}").Value2 = cellData;
 
                 for (int j = 2; j <= grid.Columns.Count; j++)
                     sheet.Columns[j].AutoFit();
@@ -453,23 +454,26 @@ namespace LegendaryLibrary
 
                 var consolidatedAccountListsByCategory = ConsolidatedAccount.GetSortedListsByCategory(consolidatedReport.ConsolidatedAccounts);
 
-                //                                                          Consolidated_Account_Id    
+                //                                       Consolidated Category + SortOrder + Consolsidated_Account_Id 
                 //                                                                     |      Ledger_Account_Id
                 //                                                                     |               |          EntitySortKey
                 //                                                                     |               |                |
-                var accountDataByLedgerAccountsByConsolidatedAccount = new SortedList<int, SortedList<int, SortedList<string, AccountData>>>();
+                var accountDataByLedgerAccountsByConsolidatedAccount = new SortedList<string, SortedList<int, SortedList<string, AccountData>>>();
 
                 foreach (var consolidatedAccountList in consolidatedAccountListsByCategory)
                     foreach (var consolidatedAccount in consolidatedAccountList.Value.Values)
                     {
                         SortedList<int, SortedList<string, AccountData>> accountDataByEntityByLedgerAccounts = null;
-                        if (! accountDataByLedgerAccountsByConsolidatedAccount.ContainsKey(consolidatedAccount.Consolidated_Account_Id))
+                        string consolidatedKey = $"{consolidatedAccount.Category}-" +
+                                                 $"{consolidatedAccount.SortOrder.ToString("000000")}-" + 
+                                                 $"{consolidatedAccount.Consolidated_Account_Id.ToString("000000")}";
+                        if (! accountDataByLedgerAccountsByConsolidatedAccount.ContainsKey(consolidatedKey))
                         {
                             accountDataByEntityByLedgerAccounts = new SortedList<int, SortedList<string, AccountData>>();
-                            accountDataByLedgerAccountsByConsolidatedAccount.Add(consolidatedAccount.Consolidated_Account_Id, accountDataByEntityByLedgerAccounts);
+                            accountDataByLedgerAccountsByConsolidatedAccount.Add(consolidatedKey, accountDataByEntityByLedgerAccounts);
                         }
 
-                        accountDataByEntityByLedgerAccounts = accountDataByLedgerAccountsByConsolidatedAccount[consolidatedAccount.Consolidated_Account_Id];
+                        accountDataByEntityByLedgerAccounts = accountDataByLedgerAccountsByConsolidatedAccount[consolidatedKey];
 
                         foreach (var ledgerAccount in ledgerAccounts)
                             if (ledgerAccount.Consolidated_Account_Id == consolidatedAccount.Consolidated_Account_Id)
@@ -499,6 +503,7 @@ namespace LegendaryLibrary
                     }
 
                 var reportStart = sheet.Range("ReportStart").Cells[1, 1];
+     //////           excelApp.Visible = true;
                 int row = reportStart.Row-1;
                 int column = reportStart.Column-1;
                 int entitySortKeyRow = 0;
@@ -528,20 +533,28 @@ namespace LegendaryLibrary
                 row = reportStart.Row - 1;
                 column = reportStart.Column - 1;
 
-                int last_Consolidated_Account_Id = 0;
+                string last_Consolidated_Category = "";
+                int startRow = 0;
+
+                decimal[] sectionSumByCol = new decimal[sortedReportEntities.Count+10];
+                var rowsWithSums = new List<(int rowStart, int rowEnd, string accountName)>();
 
                 foreach (var consolidatedPair in accountDataByLedgerAccountsByConsolidatedAccount)
+
                 {
                     column = reportStart.Column - 1;
+                    string consolidatedKey = consolidatedPair.Key;
+                    int consolidatedAccountId = int.Parse(consolidatedKey.Substring(consolidatedKey.Length - 6, 6));
+                    var consolidatedAccount = ConsolidatedAccount.GetConsolidatedAccountById(consolidatedAccountId, consolidatedAccounts);
 
-                    int consolidated_Account_Id = consolidatedPair.Key;
-                    var consolidatedAccount = ConsolidatedAccount.GetConsolidatedAccountById(consolidated_Account_Id, consolidatedAccounts);
-                    if (consolidated_Account_Id != last_Consolidated_Account_Id)
+                    if (consolidatedAccount.Category != last_Consolidated_Category)
                     {
                         cellData[row++, column] = consolidatedAccount.Category;
-                        last_Consolidated_Account_Id = consolidated_Account_Id;
+                        last_Consolidated_Category = consolidatedAccount.Category;
                     }
                     column += 1;
+
+                    startRow = row+1;
                     cellData[row++, column++] = consolidatedAccount.Name;
 
                     int savedColumn = column;
@@ -556,10 +569,23 @@ namespace LegendaryLibrary
                         for (int col = entityStartColumn; col < (entityStartColumn + sortedReportEntities.Count); col++)
                             foreach (var amountPair in ledgerPair.Value)
                                 if (amountPair.Key == (cellData[entitySortKeyRow, col] as string))
+                                {
                                     cellData[row, col] = amountPair.Value.Value;
+                                    sectionSumByCol[col] += amountPair.Value.Value;
+                                }
 
                         row += 1;
                     }
+
+                    // Write out the totals for the consolidated account...
+                    for (int col = entityStartColumn; col < (entityStartColumn + sortedReportEntities.Count); col++)
+                        cellData[row, col] = sectionSumByCol[col];
+                    cellData[row, 1] = $"Total - {consolidatedAccount.Name}";
+                    var tuple = (rowStart: startRow, rowEnd: (row + 1), accountName: consolidatedAccount.Name);
+                    rowsWithSums.Add(tuple);
+                    sectionSumByCol = new decimal[sortedReportEntities.Count + 10];
+
+                    row += 1;
                 }
 
                 // Clear out the entity sort values...
@@ -570,6 +596,23 @@ namespace LegendaryLibrary
 
                 // Write the entire object array at once to the excel sheet...
                 sheet.Range("A1:CZ500").Value2 = cellData;
+
+                // Change format of Rows that contain Totals
+                foreach (var tuple in rowsWithSums)
+                {
+                    var colName = ExcelHelper.GetExcelColumnName(entityStartColumn + sortedReportEntities.Count);
+                    var rowRange = sheet.Range($"B{tuple.rowEnd}:{colName}{tuple.rowEnd}");
+                    rowRange.Font.Bold = true;
+                    rowRange.Font.Italic = true;
+                    rowRange = sheet.Range($"B{(tuple.rowEnd - 1)}:{colName}{tuple.rowEnd - 1}");
+                    rowRange.Borders[Excel.Enums.XlBordersIndex.xlEdgeBottom].Weight = Excel.Enums.XlBorderWeight.xlThin;
+                    rowRange.Borders[Excel.Enums.XlBordersIndex.xlEdgeBottom].LineStyle = Excel.Enums.XlLineStyle.xlContinuous;
+                    rowRange = sheet.Range($"B{(tuple.rowEnd + 1)}:{colName}{tuple.rowEnd + 1}");
+                    rowRange.Borders[Excel.Enums.XlBordersIndex.xlEdgeTop].Weight = Excel.Enums.XlBorderWeight.xlThin;
+                    rowRange.Borders[Excel.Enums.XlBordersIndex.xlEdgeTop].LineStyle = Excel.Enums.XlLineStyle.xlDouble;
+                    rowRange = sheet.Range($"{tuple.rowStart}:{tuple.rowEnd-1}");
+                    rowRange.Rows.Group();
+                }
 
                 book.Save();
                 book.Close();

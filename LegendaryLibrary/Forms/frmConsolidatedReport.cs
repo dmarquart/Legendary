@@ -154,7 +154,7 @@ namespace LegendaryLibrary
             try
             {
                 bool isTRS = false;
-                string entityValue = extraCellValues[0].ToUpper();
+                string entityValue = extraCellValues[0]?.ToUpper();
                 string dateString = reportDate.ToString("MM/dd/yyy");
 
                 if (entityValue.Contains("TRS"))

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using LegendaryLibrary.Zoho;
 
 namespace LegendaryLibrary
 {
@@ -17,6 +12,7 @@ namespace LegendaryLibrary
         private List<KeyValuePair<string, SortedList<string, string>>> STRFiltered = null;
         private SortedList<string, SortedList<string, string>> ZohoHotels = null;
         private SortedList<string, SortedList<string, string>> ZohoAccounts = null;
+        private SortedList<string, SortedList<string, string>> ZohoContacts = null;
 
         public frmSTRHotelDBLoad()
         {
@@ -58,6 +54,8 @@ namespace LegendaryLibrary
                                                  (x.Value["OPEN DATE"].StartsWith("2")))
                                      .ToList() ?? new List<KeyValuePair<string, SortedList<string, string>>>();
 
+            STRFiltered = STRExisting.Where(x => 1 == 1).ToList() ?? new List<KeyValuePair<string, SortedList<string, string>>>();
+
             foreach (var pair in STRFiltered)
             {
                 var sortedList = pair.Value;
@@ -73,6 +71,7 @@ namespace LegendaryLibrary
                     case "Intercontinental Hotels Group": brandChain = "IHG"; break;
                     case "Hilton Worldwide": brandChain = "Hilton"; break;
                     case "Hyatt": brandChain = "Hyatt"; break;
+                    case "Wyndham Worldwide": brandChain = "Wyndham"; break;
                 }
                 sortedList["PARENT COMPANY"] = brandChain;
 
@@ -92,9 +91,11 @@ namespace LegendaryLibrary
             Legendary.UpdateStatus("    STR Excel File 'Existing' Sheet IS Loaded");
 
 
-       //////     CreateHotelImportFiles(this.fileZohoBackupDirectory.FullFilePath, exportDirectory);
+            CreateHotelImportFiles(this.fileZohoBackupDirectory.FullFilePath, exportDirectory);
 
             CreateCompanyImportFiles(this.fileZohoBackupDirectory.FullFilePath, exportDirectory);
+
+            CreateContactImportFiles(this.fileZohoBackupDirectory.FullFilePath, exportDirectory);
 
             Legendary.UpdateStatus("\r\n-------------------- Creation of ZOHO Import Files Is COMPLETE! --------------------\r\n");
         }
@@ -192,7 +193,7 @@ namespace LegendaryLibrary
                 else
                     CompanyCopyZohoToSTR(zohoMatch, sortedList);
                 sortedList["PHONE"] = NormalizePhone(sortedList["PHONE"]);
-                sortedList["STATE"] = Legendary.GetStateByName(sortedList["STATE"]);
+                sortedList["STATE"] = Legendary.GetStateAbbrevFromName(sortedList["STATE"]);
             }
 
             SortedList<string, string> columnsToExport = new SortedList<string, string>();
@@ -248,6 +249,227 @@ namespace LegendaryLibrary
             }
         }
 
+        private void CreateContactImportFiles(string zohoDataBackupPath, string exportDirectory)
+        {
+            string zohoContactsFullPath = System.IO.Path.Combine(this.fileZohoBackupDirectory.FullFilePath, "Contacts_001.csv");
+
+            if (!System.IO.File.Exists(zohoContactsFullPath))
+            {
+                Legendary.UpdateStatus($"\r\nZoho Contacts Data File {zohoContactsFullPath} could not be found!\r\n");
+                return;
+            }
+
+            Legendary.UpdateStatus("    Zoho Contacts Data File Loading");
+            ZohoContacts = ExcelLoader.LoadExcelFile(zohoContactsFullPath, "Contact ID", "Contacts_001", 1, 1, null, 12000, 78);
+            if (ZohoContacts == null)
+            {
+                Legendary.UpdateStatus($"\r\nFailed to load Zoho Contacts Data File {zohoContactsFullPath}!\r\n");
+                return;
+            }
+
+            var listOfLists = new SortedList<string, SortedList<string, string>>();
+
+            foreach (var pair in STRFiltered)
+            {
+                var contact = pair.Value;
+
+                if (!string.IsNullOrEmpty(contact["OWNER CONTACT NAME"]))
+                {
+                    var contactName = contact["OWNER CONTACT NAME"].Trim();
+                    var key = contactName.ToUpper();
+                    var sortedList = new SortedList<string, string>();
+                    sortedList.Add("CONTACTID", "0");
+                    sortedList.Add("NAME", contactName);
+                    sortedList.Add("STREET", contact["OWNER ADDRESS 1"]);
+                    sortedList.Add("STREET2", contact["OWNER ADDRESS 2"]);
+                    sortedList.Add("CITY", contact["OWNER CITY"]);
+                    sortedList.Add("STATE", contact["OWNER STATE"]);
+                    sortedList.Add("COUNTRY", contact["OWNER COUNTRY"]);
+                    sortedList.Add("POSTALCODE", contact["OWNER POSTAL CODE"]);
+                    sortedList.Add("PHONE", contact["OWNER PHONE"]);
+                    sortedList.Add("EMAIL", contact["OWNER EMAIL"]);
+                    sortedList.Add("WEBSITE", contact["OWNER WEBSITE"]);
+                    sortedList.Add("MAGICKEY", contact["STR NUMBER"]);
+                    if (listOfLists.ContainsKey(key))
+                    {
+                        var newList = OverwriteBlanksInStringList(listOfLists[key], sortedList);
+                        listOfLists[key] = newList;
+                    }
+                    else
+                        listOfLists.Add(key, sortedList);
+                }
+
+                if (!string.IsNullOrEmpty(contact["MANAGEMENT CONTACT NAME"]))
+                {
+                    var contactName = contact["OWNER CONTACT NAME"].Trim();
+                    var key = contactName.ToUpper();
+                    var sortedList = new SortedList<string, string>();
+                    sortedList.Add("CONTACTID", "0");
+                    sortedList.Add("NAME", contactName);
+                    sortedList.Add("STREET", contact["MANAGEMENT ADDRESS 1"]);
+                    sortedList.Add("STREET2", contact["MANAGEMENT ADDRESS 2"]);
+                    sortedList.Add("CITY", contact["MANAGEMENT CITY"]);
+                    sortedList.Add("STATE", contact["MANAGEMENT STATE"]);
+                    sortedList.Add("COUNTRY", contact["MANAGEMENT COUNTRY"]);
+                    sortedList.Add("POSTALCODE", contact["MANAGEMENT POSTAL CODE"]);
+                    sortedList.Add("PHONE", contact["MANAGEMENT PHONE"]);
+                    sortedList.Add("EMAIL", contact["MANAGEMENT EMAIL"]);
+                    sortedList.Add("WEBSITE", contact["MANAGEMENT WEBSITE"]);
+                    sortedList.Add("MAGICKEY", contact["STR NUMBER"]);
+                    if (listOfLists.ContainsKey(key))
+                    {
+                        var newList = OverwriteBlanksInStringList(listOfLists[key], sortedList);
+                        listOfLists[key] = newList;
+                    }
+                    else
+                        listOfLists.Add(key, sortedList);
+                }
+
+            }
+
+            foreach (var pair in listOfLists)
+            {
+                var sortedList = pair.Value;
+                var contactName = sortedList["NAME"];
+                var zohoMatch = ZohoContacts.FirstOrDefault(x => MatchContactNames($"{x.Value["FIRST NAME"]} {x.Value["Middle"]} {x.Value["LAST NAME"]}", contactName));
+                if (string.IsNullOrEmpty(zohoMatch.Key))
+                    sortedList["CONTACTID"] = "";
+                else
+                    ContactCopyZohoToSTR(zohoMatch, sortedList);
+                sortedList["PHONE"] = NormalizePhone(sortedList["PHONE"]);
+                sortedList["STATE"] = Legendary.GetStateAbbrevFromName(sortedList["STATE"]);
+            }
+
+            SortedList<string, string> columnsToExport = new SortedList<string, string>();
+            columnsToExport.Add("CONTACTID", "Contact ID");
+            columnsToExport.Add("FIRSTNAME", "First Name");
+            columnsToExport.Add("MIDDLE", "Middle");
+            columnsToExport.Add("LASTNAME", "Last Name");
+            columnsToExport.Add("STREET", "Street");
+            columnsToExport.Add("STREET2", "Street 2");
+            columnsToExport.Add("CITY", "City");
+            columnsToExport.Add("STATE", "State");
+            columnsToExport.Add("COUNTRY", "Country");
+            columnsToExport.Add("POSTALCODE", "Postal Code");
+            columnsToExport.Add("PHONE", "Phone");
+            columnsToExport.Add("EMAIL", "Email");
+            columnsToExport.Add("WEBSITE", "Website");
+            columnsToExport.Add("MAGICKEY", "Magic Key");
+
+            Legendary.UpdateStatus("\r\n    Saving the individual Company Excel files to output directory...");
+            string baseFileName = $"{this.txtBaseFilename.Text}-Companies-";
+
+            for (int i = 0; i < listOfLists.Count - 2; i++)
+            {
+                var firstList = listOfLists.Values[i];
+                var secondList = listOfLists.Values[i + 1];
+                if (string.Compare(firstList["COMPANYID"], secondList["COMPANYID"], true) == 0)
+                {
+                    string firstListCompanyType = firstList["COMPANYTYPE"];
+                    string secondListCompanyType = secondList["COMPANYTYPE"];
+                    if ((firstListCompanyType == "Management") && ((secondListCompanyType == "Owner") || (secondListCompanyType == "Developer")))
+                        firstList["COMPANYTYPE"] = secondListCompanyType;
+                    if ((secondListCompanyType == "Management") && ((firstListCompanyType == "Owner") || (firstListCompanyType == "Developer")))
+                        secondList["COMPANYTYPE"] = firstListCompanyType;
+                }
+            }
+            var distinctList = listOfLists.Distinct(new DistinctCompanyComparer()).ToList();
+            ExcelReporter.OutputListOfListsOfKeyValuesToNewWorkbook(distinctList, columnsToExport, exportDirectory, baseFileName, 5000);
+            Legendary.UpdateStatus("    Individual Company Excel files ARE SAVED to output directory");
+
+        }
+
+        private bool MatchContactNames(string name1, string name2)
+        {
+            bool result = false;
+            if (string.Compare(MatchableContactName(name1), MatchableContactName(name2), true) == 0)
+                result = true;
+            return result;
+        }
+
+        private string MatchableContactName(string contactName)
+        {
+            string result = NormalizeContactNameForMatch(contactName);
+            return result;
+        }
+
+        private string NormalizeContactNameForMatch(string contactName)
+        {
+            var newContactName = contactName.Trim().ToUpper();
+            return newContactName;
+        }
+        private void ContactCopyZohoToSTR(KeyValuePair<string, SortedList<string, string>> zohoContact, SortedList<string, string> contact)
+        {
+            contact["COMPANYID"] = zohoContact.Value["COMPANY ID"];
+            CopyOneContactFieldIfNotEmpty(zohoContact, "COMPANY TYPE", contact, "COMPANYTYPE");
+            CopyOneContactFieldIfNotEmpty(zohoContact, "COMPANY NAME", contact, "NAME");
+
+            bool forceCopy = false;
+
+            if (string.IsNullOrWhiteSpace(zohoContact.Value["STREET"]) ||
+                string.IsNullOrWhiteSpace(zohoContact.Value["CITY"]) ||
+                string.IsNullOrWhiteSpace(zohoContact.Value["STATE"]) ||
+                string.IsNullOrWhiteSpace(zohoContact.Value["COUNTRY"]) ||
+                string.IsNullOrWhiteSpace(zohoContact.Value["ZIP CODE"]))
+                forceCopy = true;
+
+            if (forceCopy && (string.IsNullOrWhiteSpace(contact["STREET"]) ||
+                              string.IsNullOrWhiteSpace(contact["CITY"]) ||
+                              string.IsNullOrWhiteSpace(contact["STATE"]) ||
+                              string.IsNullOrWhiteSpace(contact["COUNTRY"]) ||
+                              string.IsNullOrWhiteSpace(contact["POSTALCODE"])))
+                forceCopy = false;
+
+            CopyOneContactFieldIfNotEmpty(zohoContact, "STREET", contact, "STREET", forceCopy);
+            CopyOneContactFieldIfNotEmpty(zohoContact, "STREET 2", contact, "STREET2", forceCopy);
+            CopyOneContactFieldIfNotEmpty(zohoContact, "CITY", contact, "CITY", forceCopy);
+            CopyOneContactFieldIfNotEmpty(zohoContact, "STATE", contact, "STATE", forceCopy);
+            CopyOneContactFieldIfNotEmpty(zohoContact, "COUNTRY", contact, "COUNTRY", forceCopy);
+            CopyOneContactFieldIfNotEmpty(zohoContact, "ZIP CODE", contact, "POSTALCODE", forceCopy);
+
+            CopyOneContactFieldIfNotEmpty(zohoContact, "PHONE", contact, "PHONE");
+            contact["PHONE"] = NormalizePhone(contact["PHONE"]);
+
+            CopyOneContactFieldIfNotEmpty(zohoContact, "EMAIL", contact, "EMAIL");
+            CopyOneContactFieldIfNotEmpty(zohoContact, "WEBSITE", contact, "WEBSITE");
+
+            //CopyOneContactFieldIfNotEmpty(zohoCompany, "MAGIC KEY", company, "MAGICKEY");
+        }
+
+        private void CopyOneContactFieldIfNotEmpty(KeyValuePair<string, SortedList<string, string>> zohoCompany, string zohoField,
+                                                   SortedList<string, string> company, string field, bool forceKeepCompany = false)
+        {
+            if (string.IsNullOrWhiteSpace(zohoCompany.Value[zohoField]))
+                return;
+
+            string zohoName = zohoCompany.Value["COMPANY NAME"];
+            string name = company["NAME"];
+
+            if (string.IsNullOrWhiteSpace(company[field]))
+            {
+                company[field] = zohoCompany.Value[zohoField];
+                string update = $"ZOHO~{zohoName}~{zohoField}~{zohoCompany.Value[zohoField]}~is being kept because~" +
+                                $"STR~{name}~{field}~ ~is empty.";
+                Legendary.UpdateStatus(update);
+            }
+            else
+            {
+                if ((string.Compare(zohoCompany.Value[zohoField], company[field], true) != 0) && (!forceKeepCompany))
+                {
+                    company[field] = zohoCompany.Value[zohoField];
+                    string update = $"ZOHO~{zohoName}~{zohoField}~{zohoCompany.Value[zohoField]}~is different from~" +
+                                    $"STR~{name}~{field}~{company[field]}~but not changing because default is to keep Zoho value.";
+                    Legendary.UpdateStatus(update);
+                }
+                else if (forceKeepCompany)
+                {
+                    string update = $"ZOHO~{zohoName}~{zohoField}~{zohoCompany.Value[zohoField]}~is different from~" +
+                                    $"STR~{name}~{field}~{company[field]}~but are changing because part of Zoho address is missing.";
+                    Legendary.UpdateStatus(update);
+                }
+            }
+        }
+
         private string NormalizePhone(string phone)
         {
             string newPhone = phone.Replace("(","").Replace(")","").Replace("-","").Replace(" ","");
@@ -264,7 +486,7 @@ namespace LegendaryLibrary
         private bool MatchCompanyNames(string name1, string name2)
         {
             bool result = false;
-            if (string.Compare(MatchableCoName(name1), MatchableCoName(name2), true) == 0)
+            if (string.Compare(MatchableCompanyName(name1), MatchableCompanyName(name2), true) == 0)
                 result = true;
             return result;
         }
@@ -377,7 +599,7 @@ namespace LegendaryLibrary
             return newCoName;
         }
 
-        private string MatchableCoName(string companyName)
+        private string MatchableCompanyName(string companyName)
         {
             string result = NormalizeCompanyNameForMatch(companyName);
             result = NormalizeCompanyNameForMatch(result);

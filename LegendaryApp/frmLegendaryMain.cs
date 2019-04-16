@@ -18,6 +18,7 @@ namespace LegendaryApp
         public frmLegendaryMain()
         {
             InitializeComponent();
+           
         }
 
         private void btnConsolidatedReport_Click(object sender, EventArgs e)
@@ -155,5 +156,18 @@ namespace LegendaryApp
             tsmiSTRHotelDBLoad_Click(null, null);
         }
 
+        private void tsBtnGitHub_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new LegendaryLibrary.frmGitHubAcquisitionModel();
+                form.MdiParent = this;
+                form.Show();
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+        }
     }
 }

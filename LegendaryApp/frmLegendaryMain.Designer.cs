@@ -37,6 +37,7 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPipedriveFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPhoenixCheck = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSTRHotelDBLoad = new System.Windows.Forms.ToolStripMenuItem();
             this.windowManagerPanel1 = new MDIWindowManager.WindowManagerPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
@@ -46,7 +47,7 @@
             this.tsBtnConsolidatedReport = new System.Windows.Forms.ToolStripButton();
             this.tsBtnPipedriveFilter = new System.Windows.Forms.ToolStripButton();
             this.tsBtnSTRLoad = new System.Windows.Forms.ToolStripButton();
-            this.tsmiSTRHotelDBLoad = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBtnGitHub = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -119,6 +120,13 @@
             this.tsmiPhoenixCheck.Text = "Phoenix Check...";
             this.tsmiPhoenixCheck.Click += new System.EventHandler(this.tsmiPhoenixCheck_Click);
             // 
+            // tsmiSTRHotelDBLoad
+            // 
+            this.tsmiSTRHotelDBLoad.Name = "tsmiSTRHotelDBLoad";
+            this.tsmiSTRHotelDBLoad.Size = new System.Drawing.Size(182, 22);
+            this.tsmiSTRHotelDBLoad.Text = "STR Hotel DB Load...";
+            this.tsmiSTRHotelDBLoad.Click += new System.EventHandler(this.tsmiSTRHotelDBLoad_Click);
+            // 
             // windowManagerPanel1
             // 
             this.windowManagerPanel1.AllowUserVerticalRepositioning = false;
@@ -182,7 +190,8 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsBtnConsolidatedReport,
             this.tsBtnPipedriveFilter,
-            this.tsBtnSTRLoad});
+            this.tsBtnSTRLoad,
+            this.tsBtnGitHub});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1075, 25);
@@ -219,12 +228,15 @@
             this.tsBtnSTRLoad.Text = "Load STR DB Into Zoho";
             this.tsBtnSTRLoad.Click += new System.EventHandler(this.tsBtnSTRLoad_Click);
             // 
-            // sTRHotelDBLoadToolStripMenuItem
+            // tsBtnGitHub
             // 
-            this.tsmiSTRHotelDBLoad.Name = "sTRHotelDBLoadToolStripMenuItem";
-            this.tsmiSTRHotelDBLoad.Size = new System.Drawing.Size(182, 22);
-            this.tsmiSTRHotelDBLoad.Text = "STR Hotel DB Load...";
-            this.tsmiSTRHotelDBLoad.Click += new System.EventHandler(this.tsmiSTRHotelDBLoad_Click);
+            this.tsBtnGitHub.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnGitHub.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnGitHub.Image")));
+            this.tsBtnGitHub.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnGitHub.Name = "tsBtnGitHub";
+            this.tsBtnGitHub.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnGitHub.Text = "Run GitHub for Acquisition Model";
+            this.tsBtnGitHub.Click += new System.EventHandler(this.tsBtnGitHub_Click);
             // 
             // frmLegendaryMain
             // 
@@ -271,6 +283,7 @@
         private System.Windows.Forms.ToolStripButton tsBtnPipedriveFilter;
         private System.Windows.Forms.ToolStripButton tsBtnSTRLoad;
         private System.Windows.Forms.ToolStripMenuItem tsmiSTRHotelDBLoad;
+        private System.Windows.Forms.ToolStripButton tsBtnGitHub;
     }
 }
 

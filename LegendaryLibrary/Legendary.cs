@@ -122,7 +122,7 @@ namespace LegendaryLibrary
             }
         }
 
-        static public string GetStateByName(string name)
+        static public string GetStateAbbrevFromName(string name)
         {
             switch (name.ToUpper())
             {

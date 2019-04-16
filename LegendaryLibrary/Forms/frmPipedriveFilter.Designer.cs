@@ -134,6 +134,8 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.chkIncludeDoNotContact = new System.Windows.Forms.CheckBox();
             this.chkKeepZReps = new System.Windows.Forms.CheckBox();
+            this.btnCreateConstantContactImportList = new System.Windows.Forms.Button();
+            this.btnUpdateSpecialPipedriveFields = new System.Windows.Forms.Button();
             this.pnlFirmSyndicateOffice.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -1483,11 +1485,33 @@
             this.chkKeepZReps.Text = "Keep \"Z\" Reps In List";
             this.chkKeepZReps.UseVisualStyleBackColor = true;
             // 
+            // btnCreateConstantContactImportList
+            // 
+            this.btnCreateConstantContactImportList.Location = new System.Drawing.Point(534, 22);
+            this.btnCreateConstantContactImportList.Name = "btnCreateConstantContactImportList";
+            this.btnCreateConstantContactImportList.Size = new System.Drawing.Size(183, 23);
+            this.btnCreateConstantContactImportList.TabIndex = 131;
+            this.btnCreateConstantContactImportList.Text = "Create Constant Contact Import List";
+            this.btnCreateConstantContactImportList.UseVisualStyleBackColor = true;
+            this.btnCreateConstantContactImportList.Click += new System.EventHandler(this.btnCreateConstantContactImportList_Click);
+            // 
+            // btnUpdateSpecialPipedriveFields
+            // 
+            this.btnUpdateSpecialPipedriveFields.Location = new System.Drawing.Point(333, 22);
+            this.btnUpdateSpecialPipedriveFields.Name = "btnUpdateSpecialPipedriveFields";
+            this.btnUpdateSpecialPipedriveFields.Size = new System.Drawing.Size(183, 23);
+            this.btnUpdateSpecialPipedriveFields.TabIndex = 132;
+            this.btnUpdateSpecialPipedriveFields.Text = "Update Special Pipedrive Fields";
+            this.btnUpdateSpecialPipedriveFields.UseVisualStyleBackColor = true;
+            this.btnUpdateSpecialPipedriveFields.Click += new System.EventHandler(this.btnUpdateSpecialPipedriveFields_Click);
+            // 
             // frmPipedriveFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1181, 779);
+            this.Controls.Add(this.btnUpdateSpecialPipedriveFields);
+            this.Controls.Add(this.btnCreateConstantContactImportList);
             this.Controls.Add(this.chkIncludeDoNotContact);
             this.Controls.Add(this.chkKeepZReps);
             this.Controls.Add(this.chk_CORP_SamMontgomery);
@@ -1669,5 +1693,7 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.CheckBox chkIncludeDoNotContact;
         private System.Windows.Forms.CheckBox chkKeepZReps;
+        private System.Windows.Forms.Button btnCreateConstantContactImportList;
+        private System.Windows.Forms.Button btnUpdateSpecialPipedriveFields;
     }
 }

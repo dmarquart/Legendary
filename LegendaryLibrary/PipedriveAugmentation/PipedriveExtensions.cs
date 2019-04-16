@@ -26,15 +26,24 @@ namespace LegendaryLibrary.PipedriveAugmentation
         static public string NumberOfReps = "c1fb491803a3b8d84e631d74e299143ecd1b2d14";
         static public string WebSite = "7aa93720e2791e1fee19530c0db1212c9eee014e";
         static public string OrgType = "799204412cd75fd9c5793799f701a5a5ec44c956";
-               static public class OrgTypes { static public string BrokerDealer = "75";
-                                              static public string RIA = "76";
-                                              static public string ServiceProvider = "77";
-                                              static public string BankLegalAccounting = "81";
-                                              static public string OtherUnknown = "125";
-                                              static public string Remove = "124";
-                                              static public string Combine = "126"; }
+                public enum OrgTypeEnum { BrokerDealer = 75,
+                                          RIA = 76,
+                                          ServiceProvider = 77,
+                                          BankLegalAccounting = 81,
+                                          OtherUnknown = 125,
+                                          Remove = 124,
+                                          Combine = 126 };
+                static public (int, string)[] OrgTypes = { (75, "Broker Dealer"),
+                                                           (76, "RIA"),
+                                                           (77, "Service Provider"),
+                                                           (81, "Bank/Legal/Accounting"),
+                                                           (125, "Other/Unknown"),
+                                                           (124, "Remove"),
+                                                           (126, "Combine") };
         static public string CRD = "764cf82ef7cfae0175d4d9a00c390a0b301af46b";
         static public string Note = "8a6a8804714452df3235b506d8ef39948f0650ea";
+        static public string HasSA = "0b735115b05b98db60b43dbd05d9401b447bf5b7";
+        static public string Codings = "0158935ec466ddd6651a59b4172a799a4f34a4f1";
     }
 
     public static class DealCustomFields
@@ -74,47 +83,93 @@ namespace LegendaryLibrary.PipedriveAugmentation
         static public string AssetsUnderManagement = "d05b4e47cc657a461458a0a2d84ec0226a3d26b4";
         static public string LicenseType = "726f1b485a4603a9f1d80a31dfd5f5222a27bf83";
         static public string SellsRegD = "fe1e10c89499b301decce25f65dccb1df165413f";
-                static public class SellsRegDs { static public string Yes = "3";
-                                                 static public string No = "4"; }
+                static public (int, string)[] SellsRegDs = { (3, "Yes"),
+                                                             (4, "No") };
         static public string SellsREIT = "60070156b7f1d60cfe4ca4c53d8ce7961abc4faa";
-                static public class SellsREITs { static public string Yes = "5";
-                                                 static public string No = "6"; }
+                static public (int, string)[] SellsREITs = { (5, "Yes"),
+                                                             (6, "No") };
         static public string Sells1031 = "a5d5ea9df28619528d6076c82a32d16e249a1c34";
-                static public class Sells1031s { static public string Yes = "7";
-                                                 static public string No = "8"; }
+                static public (int, string)[] Sells1031s = { (7, "Yes"),
+                                                             (8, "No") };
         static public string ContactType = "e0ea461f68fe5d1d85a1e6d3567578a65230dd1b";
-                static public class ContactTypes { static public string BD = "45";
-                                                    static public string Rep = "46";
-                                                    static public string RIA = "47";
-                                                    static public string DI = "48";
-                                                    static public string Other = "49";
-                                                    static public string BankLegalAccounting = "82"; }
+                public enum ContactTypeEnum { BD = 45,
+                                              Rep = 46,
+                                              RIA = 47,
+                                              DI = 48,
+                                              Other = 49,
+                                              BankLegalAccounting = 82 };
+                static public (int, string)[] ContactTypes = { (45, "BD"),
+                                                               (46, "Rep"),
+                                                               (47, "RIA"),
+                                                               (48, "DI"),
+                                                               (49, "Other"),
+                                                               (82, "BankLegalAccounting") };
         static public string Title = "f6a28d41b8541d6a63ee90e42986379c47c3a86d";
         static public string MonthlyUpdate = "95c26cd0edb6765afcf80ded7b1d34b3788b3ab4";
-                static public class MonthlyUpdates { static public string BD = "55";
-                                                     static public string Rep = "56";
-                                                     static public string Industry = "57";
-                                                     static public string Other = "58";
-                                                     static public string No = "59"; }
+                static public (int, string)[] MonthlyUpdates = { (55, "BD"),
+                                                                 (56, "Rep"),
+                                                                 (57, "Industry"),
+                                                                 (58, "Other"),
+                                                                 (59, "No") };
         static public string FirmName = "d1f24d23ce6a5cfc2ca502d4818901b98d708827";
         static public string FirmWebsite = "319471b0c04994875a645d23cc69c2fd2fdb169c";
+        static public string FirmLOFReitHasSA = "03286ad139a3481bf6f18705c3825f87abae10d5";
+                static public (int, string)[] FirmLOFReitHasSAs = { (222, "Yes"),
+                                                                    (223, "No") };
+        static public string FirmLOFReitCoding = "3a13198040721079c887481710048ec33ada24c9";
+        static public string FirmLFReitIIIHasSA = "a6c72a4992bc2cbb9902f57c32f0d3f2da4a6593";
+             static public (int, string)[] FirmLFReitIIIHasSAs = { (224, "Yes"),
+                                                                   (225, "No") };
+        static public string FirmLFReitIIICoding = "4c90d6dce5de19d2668760ebedd480d2658a471d";
         static public string SendAnnualReport = "9cc6aa6a6863dfe20daa80a89f401a422dfab93c";
-                static public class SendAnnualReports { static public string Yes = "60";
-                                                        static public string No = "61"; }
+                static public (int, string)[] SendAnnualReports = { (60, "Yes"),
+                                                                    (61, "No") };
         static public string HasSellingAgreement = "573a0489896b9ec47a2bb7924b9160c80d3b7172";
-                static public class HasSellingAgreements { static public string Yes = "78";
-                                                            static public string No = "79"; }
+                static public (int, string)[] HasSellingAgreements = { (78, "Yes"),
+                                                                       (79, "No") };
         static public string Events_1 = "54b4c40331217600b7ac42b05a533f1afef4777c";
         static public string Notes = "10c30f276f9fb77acad6f81b536f301f2f40979c";
         static public string CRD = "cd639732af33766a236089c9ad1abf60bcb8f58f";
         static public string BCCEmail = "14bd44a1fcc3f3035f288c3312065c52a4efb23e";
         static public string FaxNumber = "6f0df5a20f2126878966784168f13ba6a25695d5";
         static public string HomeOfficeDistribution = "5ceac4c95d4135a70447fd381d104dc416b4f178";
-                static public class HomeOfficeDistributions { static public string DueDiligence = "162";
-                                                              static public string HomeOfficeOther = "163" ; }
+                public enum HomeOfficeDistributionEnum { NotSet = 0,
+                                                         DueDiligence = 162,
+                                                         HomeOfficeOtherContact = 163 };
+                static public (int, string)[] HomeOfficeDistributions = { (162, "Due Diligence"),
+                                                                          (163, "Home Office Other Contact") };
         static public string DoNotContact = "3fc3f48303dc1114f265b7d3233d64c3afff62ee";
-                static public class DoNotContacts { static public string ContactOkay = "184";
-                                                    static public string DoNotContact = "185"; }
+                public enum DoNotContactEnum { NotSet = 0, ContactOkay = 184, DoNotContact = 185 };
+                static public (int, string)[] DoNotContacts = { (184, "Contact Okay"),
+                                                                (185, "Do Not Contact") };
+        static public string RVP = "db6a4d6867119fa9593d9d7d6bddd21ccd495303";
+                static public (int, string)[] RVPs = { (207, "Mindey Morrison"),
+                                                       (208, "Ken Beck"),
+                                                       (209, "Todd King"),
+                                                       (210, "Craig Gunter"),
+                                                       (211, "Chad Whatley") };
+        static public string AVP = "d3b7d2ebdebddf9bb2b38d0c1283b52ff384bc01";
+                static public (int, string)[] AVPs = { (203, "Erica Blue"),
+                                                       (204, "Angela Clakley"),
+                                                       (205, "Terry Jones"),
+                                                       (206, "Ryan Sullivan") };
+        static public string DistributionRegion = "127f142157f4ca35ee6f5d5058d9278935fa3a18";
+                static public (int, string)[] DistributionRegions = { (212, "West"),
+                                                                      (213, "North Central"),
+                                                                      (214, "South Central"),
+                                                                      (215, "North East"),
+                                                                      (216, "South East") };
+        static public string OptedOutOfEmail = "a30c3de6436f5ed5a309b08d6910349726a5d8cb";
+                static public (int, string)[] OptedOutOfEmails = { (201, "Yes"),
+                                                                   (202, "No") };
+        static public string RepLOFReitHasSold = "878b6f7aefb860d0f28d0466f9c99b68ab8f96ee";
+                static public (int, string)[] RepLOFReitHasSolds = { (228, "Yes"),
+                                                                     (229, "No") };
+        static public string RepLOFReitCoding = "1cfc420504060aaec66de1b988c7ad8f4edecf0b";
+        static public string RepLFReitIIIHasSold = "2ebecaa94de593a036a6d92ca6ea7f1ac44f6fdb";
+                static public (int, string)[] RepLFReitIIIHasSolds = { (230, "Yes"),
+                                                                       (231, "No") };
+        static public string RepLFReitIIICoding = "f1bdc8532927321a92efffc7a5df20f4f36ed2c5";
     }
 
     static public class PipelineList
@@ -208,7 +263,7 @@ namespace LegendaryLibrary.PipedriveAugmentation
                 List<Deal> allDeals = new List<Deal>();
 
                 double percentComplete = 0;
-                double percentIncrement = (double)((double)(500.0 / 12000.0) * 100.0);
+                double percentIncrement = (double)((double)(500.0 / 14000.0) * 100.0);
                 bool done = false;
                 int count = 0;
 
@@ -253,7 +308,7 @@ namespace LegendaryLibrary.PipedriveAugmentation
                 var personFilters = new PersonFilters() { StartPage = 0, PageCount = 1, PageSize = 500 };
 
                 double percentComplete = 0;
-                double percentIncrement = (double)((double)(500.0 / 8000.0) * 100.0);
+                double percentIncrement = (double)((double)(500.0 / 11000.0) * 100.0);
                 bool done = false;
                 int count = 0;
 
@@ -295,7 +350,7 @@ namespace LegendaryLibrary.PipedriveAugmentation
                 var organizationFilters = new OrganizationFilters() { StartPage = 0, PageCount = 1, PageSize = 500 };
 
                 double percentComplete = 0;
-                double percentIncrement = (double)((double)(500.0 / 2500.0) * 100.0);
+                double percentIncrement = (double)((double)(500.0 / 3500.0) * 100.0);
                 bool done = false;
                 int count = 0;
 
@@ -352,6 +407,30 @@ namespace LegendaryLibrary.PipedriveAugmentation
                 Legendary.UpdateStatus(ex);
                 return new List<Pipeline>();
             }
+        }
+
+        static public async Task EditPerson(PipedriveClient pipedriveClient, PipedriveTarget pipedriveTarget)
+        {
+            //var fixture = pipedriveClient.Person;
+
+            //var newPerson = new NewPerson("new-name");
+            //var person = await fixture.Create(newPerson);
+
+            //var editPerson = person.ToUpdate();
+            //editPerson.Name = "updated-name";
+            //editPerson.Email = new List<Email>
+            //{
+            //    { new Email { Value = "test@example.com", Primary = true } }
+            //};
+
+            //var updatedPerson = await fixture.Edit(person.Id, editPerson);
+
+            //Assert.Equal("updated-name", updatedPerson.Name);
+            //Assert.Equal("test@example.com", updatedPerson.Email[0].Value);
+            //Assert.True(updatedPerson.Email[0].Primary);
+
+            //// Cleanup
+            //await fixture.Delete(updatedPerson.Id);
         }
     }
 }

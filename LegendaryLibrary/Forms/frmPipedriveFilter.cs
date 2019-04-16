@@ -77,7 +77,7 @@ namespace LegendaryLibrary
 
         private PipedriveTargetFilter GetFilterFromForm()
         {
-            var legendaryProducts = new List<enumFilterLegendaryProducts>();
+            var legendaryProducts = new List<enumLegendaryProducts>();
             enumFilterMarketingAudiences marketingAudience = enumFilterMarketingAudiences.NotSet;
             enumFilterYesNoEither firmSyndicate = enumFilterYesNoEither.NotSet;
             var sellingFirms = new List<enumFilterSellingFirms>();
@@ -97,9 +97,9 @@ namespace LegendaryLibrary
                 keepZReps = true;
 
             if (chkLOFREIT.Checked)
-                legendaryProducts.Add(enumFilterLegendaryProducts.LOFReit);
+                legendaryProducts.Add(enumLegendaryProducts.LOFReit);
             if (chkLFREITIII.Checked)
-                legendaryProducts.Add(enumFilterLegendaryProducts.LFReitIII);
+                legendaryProducts.Add(enumLegendaryProducts.LFReitIII);
 
             if (chk_AUD_SellingFirmsReps.Checked)
                 marketingAudience = enumFilterMarketingAudiences.SellingFirms;
@@ -177,14 +177,14 @@ namespace LegendaryLibrary
             return pipedriveFilter;
         }
 
-        private async Task ExecuteCreationOfMailingList()
+        private async Task GetAllPipedriveData()
         {
             try
             {
                 var headerValue = new ProductHeaderValue("PipedriveSampleClient");
                 PipedriveClient pipedriveClient = new PipedriveClient(headerValue, Legendary.PipedriveApiUrl, Legendary.PipedriveAPIKey);
 
-                if (! Legendary.StatusStopNow)
+                if (!Legendary.StatusStopNow)
                     PipedriveDeals = await PipedriveExtensions.GetAllDeals(pipedriveClient);
 
                 if (!Legendary.StatusStopNow)
@@ -196,11 +196,28 @@ namespace LegendaryLibrary
                 if (!Legendary.StatusStopNow)
                     PipedriveOrganizations = await PipedriveExtensions.GetAllOrganizations(pipedriveClient);
 
+                if (Legendary.StatusStopNow)
+                    Legendary.UpdateStatus("Cancelled by User");
+
                 //var myDeal = PipedriveDeals.Where(x => x.PersonName == "Ernesto Chavez").ToList();
                 //var myPerson = PipedrivePersons.Where(x => x.Name == "John B. Darmanian").ToList();
-                //var myPerson2 = PipedrivePersons.Where(x => x.Name == "John Arnold Pallo").ToList();
-                //var myPerson3 = PipedrivePersons.Where(x => x.Name == "Donald Blauner").ToList();
-                //var myPerson4 = PipedrivePersons.Where(x => x.Name == "Ernesto Chavez").ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+            finally
+            {
+                Legendary.StatusStopNow = false;
+            }
+        }
+
+        private async Task ExecuteCreationOfMailingList()
+        {
+            try
+            {
+                await GetAllPipedriveData();
 
                 FilterBasedOnFormChoices();
 
@@ -241,6 +258,68 @@ namespace LegendaryLibrary
                 form.MdiParent = this.MdiParent;
                 form.Show();
                 Legendary.UpdateStatus("Filter Results... Finished!");
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void CreateConstantContactImportList()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Legendary.UpdateStatus("Create Constant Contact Import List...");
+                List<PipedriveTarget> contactList = null;
+
+                if (!Legendary.StatusStopNow)
+                    contactList = PipedriveTargetFilter.GetAllPersonsForConstantContact(PipedriveDeals, PipedrivePersons, PipedriveOrganizations);
+
+                contactList.Sort(new PipedriveTargetComparer());
+
+                var form = new frmPipedriveResults();
+                form.ShowPipedriveData(contactList);
+                form.SetFilterDescription("Constant Contat Import List");
+                form.Text = $@"CC:{contactList.Count}";
+                form.MdiParent = this.MdiParent;
+                form.Show();
+                Legendary.UpdateStatus("Create Constant Contact Import List... Finished!");
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void UpdateSpecialPipedriveFields()
+        {
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Legendary.UpdateStatus("Update Special Pipedrive Fields...");
+                List<PipedriveTarget> contactList = null;
+
+                if (!Legendary.StatusStopNow)
+                    contactList = PipedriveTargetFilter.UpdateSpecialContactFields(PipedriveDeals, PipedrivePersons, PipedriveOrganizations);
+
+                contactList.Sort(new PipedriveTargetComparer());
+
+                var form = new frmPipedriveResults();
+                form.ShowPipedriveData(contactList);
+                form.SetFilterDescription("Update Special Pipedrive Fields");
+                form.Text = $@"UPD:{contactList.Count}";
+                form.MdiParent = this.MdiParent;
+                form.Show();
+                Legendary.UpdateStatus("Update Special Pipedrive Fields... Finished!");
             }
             catch (Exception ex)
             {
@@ -574,6 +653,57 @@ namespace LegendaryLibrary
                     chkIAR.Enabled = true;
                     chkIAR.Checked = false;
                 }
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+        }
+
+        private async Task async_btnCreateConstantContactImportList_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await GetAllPipedriveData();
+                CreateConstantContactImportList();
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+        }
+
+        private void btnCreateConstantContactImportList_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                async_btnCreateConstantContactImportList_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+        }
+
+
+        private async Task async_btnUpdateSpecialPipedriveFields_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await GetAllPipedriveData();
+                UpdateSpecialPipedriveFields();
+            }
+            catch (Exception ex)
+            {
+                Legendary.UpdateStatus(ex);
+            }
+        }
+
+        private void btnUpdateSpecialPipedriveFields_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                async_btnUpdateSpecialPipedriveFields_Click(sender, e);
             }
             catch (Exception ex)
             {
